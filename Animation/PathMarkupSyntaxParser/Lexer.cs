@@ -14,7 +14,7 @@ namespace PinkWpf.Animation.PathMarkupSyntaxParser
         private int _position;
         private int _startPosition;
         private Token _token;
-        private StringBuilder _buffer = new();
+        private StringBuilder _buffer = new StringBuilder();
         private char? _current;
 
         private char? Next
@@ -22,7 +22,7 @@ namespace PinkWpf.Animation.PathMarkupSyntaxParser
             get
             {
                 var next = Stream.Peek();
-                return next == -1 ? null : (char)next;
+                return next == -1 ? null : (char?)next;
             }
         }
 
@@ -64,7 +64,7 @@ namespace PinkWpf.Animation.PathMarkupSyntaxParser
         {
             _position++;
             var current = Stream.Read();
-            _current = current == -1 ? null : (char)current;
+            _current = current == -1 ? null : (char?)current;
             _buffer.Append(_current);
         }
 

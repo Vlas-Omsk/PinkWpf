@@ -7,7 +7,7 @@ namespace PinkWpf.Animation.PathMarkupSyntaxParser
 {
     public class GeometryData
     {
-        public List<Figure> Figures { get; } = new();
+        public List<Figure> Figures { get; } = new List<Figure>();
 
         public GeometryData Substract(GeometryData geometryData)
         {

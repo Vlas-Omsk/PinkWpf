@@ -28,8 +28,8 @@ namespace PinkWpf.Animation
 
         public override object GetCurrentValue(object defaultOriginValue, object defaultDestinationValue, AnimationClock animationClock)
         {
-            defaultOriginValue = From ?? defaultOriginValue;
-            defaultDestinationValue = To ?? defaultDestinationValue;
+            defaultOriginValue = (object)From ?? defaultOriginValue;
+            defaultDestinationValue = (object)To ?? defaultDestinationValue;
 
             return GetCurrentValue((T)defaultOriginValue, (T)defaultDestinationValue, animationClock);
         }

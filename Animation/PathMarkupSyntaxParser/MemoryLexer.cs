@@ -7,20 +7,20 @@ namespace PinkWpf.Animation.PathMarkupSyntaxParser
     public class MemoryLexer : IDisposable
     {
         public string Content { get; set; }
-        public List<Token> Tokens { get; private set; } = new();
+        public List<Token> Tokens { get; private set; }
 
         private int _startPosition;
         private int _position;
         private TokenType _type;
         private object _value;
 
-        private char? Current => _position >= Content.Length ? null : Content[_position];
+        private char? Current => _position >= Content.Length ? null : (char?)Content[_position];
         private string CurrentString => Content.Substring(_startPosition, _position - _startPosition);
 
         public void Tokenize(string content)
         {
             Content = content;
-            Tokens = new();
+            Tokens = new List<Token>();
             Token token;
             for (_position = 0; _position < Content.Length;)
             {
