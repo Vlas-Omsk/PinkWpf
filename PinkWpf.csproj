@@ -70,12 +70,14 @@
     <Compile Include="Animation\TextAnimation.cs" />
     <Compile Include="Animation\TextAnimationType.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="CurrentApplication.cs" />
     <Compile Include="GlobalHook.cs" />
     <Compile Include="MarkupExtensions\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\ReverseStoryboardConverter.cs" />
     <Compile Include="MarkupExtensions\SystemType.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModelTemplate.cs" />
     <Compile Include="ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
