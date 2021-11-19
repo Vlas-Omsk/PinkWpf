@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace PinkWpf
 {
     public class Command : ICommand
     {
-        private Action<object> execute;
-        private Func<object, bool> canExecute;
+        private Action<object> _execute;
+        private Func<object, bool> _canExecute;
 
         public event EventHandler CanExecuteChanged
         {
@@ -20,27 +16,27 @@ namespace PinkWpf
 
         public Command(Action<object> execute, Func<object, bool> canExecute = null)
         {
-            this.execute = execute;
-            this.canExecute = canExecute;
+            _execute = execute;
+            _canExecute = canExecute;
         }
 
         public Command(Action execute, Func<object, bool> canExecute = null)
         {
             if (execute != null)
-                this.execute = new Action<object>(o => { execute(); });
+                _execute = new Action<object>(o => { execute(); });
             else
-                this.execute = new Action<object>(o => { });
-            this.canExecute = canExecute;
+                _execute = new Action<object>(o => { });
+            _canExecute = canExecute;
         }
 
         public bool CanExecute(object parameter)
         {
-            return this.canExecute == null || this.canExecute(parameter);
+            return _canExecute == null || _canExecute(parameter);
         }
 
         public void Execute(object parameter)
         {
-            this.execute(parameter);
+            _execute(parameter);
         }
     }
 }

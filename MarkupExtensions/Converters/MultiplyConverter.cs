@@ -6,16 +6,14 @@ using System.Windows.Markup;
 
 namespace PinkWpf.MarkupExtensions.Converters
 {
-    [ValueConversion(typeof(bool), typeof(Visibility), ParameterType = typeof(bool))]
-    public class BoolToVisibilityConverter : MarkupExtension, IValueConverter
+    [ValueConversion(typeof(double), typeof(double), ParameterType = typeof(double))]
+    public class MultiplyConverter : MarkupExtension, IValueConverter
     {
-        private static BoolToVisibilityConverter _instance;
+        private static MultiplyConverter _instance;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter != null && (bool)parameter)
-                value = !(bool)value;
-            return (bool)value ? Visibility.Visible : Visibility.Hidden;
+            return (double)value * (double)parameter;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -25,7 +23,7 @@ namespace PinkWpf.MarkupExtensions.Converters
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return _instance ?? (_instance = new BoolToVisibilityConverter());
+            return _instance ?? (_instance = new MultiplyConverter());
         }
     }
 }

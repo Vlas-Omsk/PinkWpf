@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace PinkWpf
@@ -17,7 +12,7 @@ namespace PinkWpf
         public static TCurrentApplication Instance { get; } = new TCurrentApplication();
 
         protected TWindow MainWindow => (TWindow)Application.Current.MainWindow;
-        protected TWindowViewModel MainWindowViewModel => ViewModel.GetViewModel<TWindowViewModel>(MainWindow);
+        protected TWindowViewModel MainWindowViewModel => (TWindowViewModel)MainWindow.DataContext;
 
         protected CurrentApplication()
         {
