@@ -68,11 +68,12 @@
     <Compile Include="Animation\PathMarkupSyntaxParser\GeometryData.cs" />
     <Compile Include="Animation\PathMarkupSyntaxParser\Lexer.cs" />
     <Compile Include="Controls\BindingEvaluator.cs" />
-    <Compile Include="MarkupExtensions\BindingEx.cs" />
     <Compile Include="MarkupExtensions\Converters\DictionaryConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\AddConverter.cs" />
-    <Compile Include="MarkupExtensions\Converters\ObjectConverter.cs" />
+    <Compile Include="MarkupExtensions\Converters\MultiValueConverter.cs" />
+    <Compile Include="MarkupExtensions\Converters\PathConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\StringToRegexConverter.cs" />
+    <Compile Include="MarkupExtensions\Converters\ValueConverter.cs" />
     <Compile Include="MouseButtonEventArgs.cs" />
     <Compile Include="MouseInputEventArgs.cs" />
     <Compile Include="MouseWheelEventArgs.cs" />
