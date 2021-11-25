@@ -2,7 +2,7 @@
 
 namespace PinkWpf.NativeStructs
 {
-    public enum RIM : int
+    public enum RIM : uint
     {
         TYPEMOUSE = 0
     }

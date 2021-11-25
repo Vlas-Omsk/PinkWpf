@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace PinkWpf.NativeStructs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct BUTTONSSTR
+    public struct RAWMOUSEBUTTONS
     {
         [MarshalAs(UnmanagedType.U2)]
         public RI_MOUSE usButtonFlags;

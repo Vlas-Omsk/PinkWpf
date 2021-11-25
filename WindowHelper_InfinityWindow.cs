@@ -19,7 +19,7 @@ namespace PinkWpf
                 return;
             InfinityWindowEnabled = true;
 
-            HideCloseButton();
+            HideWindowSysMenu();
 
             _xborder = GetSystemMetrics(SM.CXSIZEFRAME);
             _yborder = GetSystemMetrics(SM.CYSIZEFRAME);

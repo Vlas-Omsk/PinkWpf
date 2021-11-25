@@ -7,8 +7,9 @@ namespace PinkWpf.NativeStructs
     public struct RAWHID
     {
         [MarshalAs(UnmanagedType.U4)]
-        public int dwSizHid;
+        public int dwSizeHid;
         [MarshalAs(UnmanagedType.U4)]
         public int dwCount;
+        public byte bRawData;
     }
 }

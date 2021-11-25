@@ -5,14 +5,15 @@ using System.Windows.Markup;
 
 namespace PinkWpf.MarkupExtensions.Converters
 {
-    [ValueConversion(typeof(double), typeof(double), ParameterType = typeof(double))]
-    public class MultiplyConverter : MarkupExtension, IValueConverter
+    [ValueConversion(typeof(object), typeof(object), ParameterType = typeof(string))]
+    public class ObjectConverter : MarkupExtension, IValueConverter
     {
-        private static MultiplyConverter _instance;
+        private static ObjectConverter _instance;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return System.Convert.ToDouble(value) * (double)parameter;
+            var propertyInfo = value.GetType().GetProperty(parameter.ToString());
+            return propertyInfo.GetValue(value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -22,7 +23,7 @@ namespace PinkWpf.MarkupExtensions.Converters
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return _instance ?? (_instance = new MultiplyConverter());
+            return _instance ?? (_instance = new ObjectConverter());
         }
     }
 }

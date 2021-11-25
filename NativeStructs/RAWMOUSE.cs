@@ -13,7 +13,7 @@ namespace PinkWpf.NativeStructs
         [FieldOffset(4)]
         public uint ulButtons;
         [FieldOffset(4)]
-        public BUTTONSSTR buttonsStr;
+        public RAWMOUSEBUTTONS buttons;
         [MarshalAs(UnmanagedType.U4)]
         [FieldOffset(8)]
         public uint ulRawButtons;

@@ -14,15 +14,11 @@ namespace PinkWpf
         {
             new RAWINPUTDEVICE()
             {
-                UsagePage = HID.USAGE_PAGE_GENERIC,
-                Usage = HID.USAGE_GENERIC_MOUSE,
-                Flags = RIDEV.INPUTSINK
+                usUsagePage = HID.USAGE_PAGE_GENERIC,
+                usUsage = HID.USAGE_GENERIC_MOUSE,
+                dwFlags = RIDEV.INPUTSINK
             }
         };
-
-        private const int wheelDelta = 120;
-        private const uint defaultScrollLinesPerWheelDelta = 3;
-        private const uint defaultScrollCharsPerWheelDelta = 1;
 
         public void EnableInputHook()
         {
@@ -31,7 +27,7 @@ namespace PinkWpf
             InputHookEnabled = true;
 
             for (var i = 0; i < _rawInputDevices.Length; i++)
-                _rawInputDevices[i].WindowHandle = Hwnd;
+                _rawInputDevices[i].hwndTarget = Hwnd;
 
             if (!RegisterRawInputDevices(_rawInputDevices, _rawInputDevices.Length, Marshal.SizeOf(typeof(RAWINPUTDEVICE))))
                 throw new Exception("Cant hook mouse (error: " + Marshal.GetLastWin32Error() + ")");
@@ -56,23 +52,23 @@ namespace PinkWpf
                         RAWINPUT rawInput = (RAWINPUT)Marshal.PtrToStructure(buffer, typeof(RAWINPUT));
                         if (rawInput.header.dwType == RIM.TYPEMOUSE)
                         {
-                            if (rawInput.mouse.usFlags.HasFlag(RAWMOUSE_FLAGS.MOVE_ABSOLUTE) ||
-                                rawInput.mouse.usFlags.HasFlag(RAWMOUSE_FLAGS.MOVE_RELATIVE))
+                            if (rawInput.Mouse.usFlags.HasFlag(RAWMOUSE_FLAGS.MOVE_ABSOLUTE) ||
+                                rawInput.Mouse.usFlags.HasFlag(RAWMOUSE_FLAGS.MOVE_RELATIVE))
                                 ProcessMouseMove(rawInput);
-                            if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.WHEEL) ||
-                                rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.HWHEEL))
+                            if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.WHEEL) ||
+                                rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.HWHEEL))
                                 ProcessMouseWheel(rawInput);
-                            if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.LEFT_BUTTON_DOWN) ||
-                                rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.RIGHT_BUTTON_DOWN) ||
-                                rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.MIDDLE_BUTTON_DOWN) ||
-                                rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_4_DOWN) ||
-                                rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_5_DOWN))
+                            if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.LEFT_BUTTON_DOWN) ||
+                                rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.RIGHT_BUTTON_DOWN) ||
+                                rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.MIDDLE_BUTTON_DOWN) ||
+                                rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_4_DOWN) ||
+                                rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_5_DOWN))
                                 ProcessMouseButtonDown(rawInput);
-                            if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.LEFT_BUTTON_UP) ||
-                                rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.RIGHT_BUTTON_UP) ||
-                                rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.MIDDLE_BUTTON_UP) ||
-                                rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_4_UP) ||
-                                rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_5_UP))
+                            if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.LEFT_BUTTON_UP) ||
+                                rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.RIGHT_BUTTON_UP) ||
+                                rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.MIDDLE_BUTTON_UP) ||
+                                rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_4_UP) ||
+                                rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_5_UP))
                                 ProcessMouseButtonUp(rawInput);
                         }
                     }
@@ -89,16 +85,16 @@ namespace PinkWpf
         private void ProcessMouseMove(RAWINPUT rawInput)
         {
             Win32Point point;
-            if (rawInput.mouse.usFlags.HasFlag(RAWMOUSE_FLAGS.MOVE_ABSOLUTE))
+            if (rawInput.Mouse.usFlags.HasFlag(RAWMOUSE_FLAGS.MOVE_ABSOLUTE))
             {
-                bool isVirtualDesktop = rawInput.mouse.usFlags.HasFlag(RAWMOUSE_FLAGS.VIRTUAL_DESKTOP);
+                bool isVirtualDesktop = rawInput.Mouse.usFlags.HasFlag(RAWMOUSE_FLAGS.VIRTUAL_DESKTOP);
                 int width = GetSystemMetrics(isVirtualDesktop ? SM.CXVIRTUALSCREEN : SM.CXSCREEN);
                 int height = GetSystemMetrics(isVirtualDesktop ? SM.CYVIRTUALSCREEN : SM.CYSCREEN);
 
                 point = new Win32Point()
                 {
-                    X = (int)((rawInput.mouse.lLastX / 65535.0f) * width),
-                    Y = (int)((rawInput.mouse.lLastY / 65535.0f) * height)
+                    X = (int)((rawInput.Mouse.lLastX / 65535.0f) * width),
+                    Y = (int)((rawInput.Mouse.lLastY / 65535.0f) * height)
                 };
             }
             else
@@ -117,27 +113,10 @@ namespace PinkWpf
         {
             var e = new MouseWheelEventArgs();
 
-            e.WheelDelta = (float)(short)(rawInput.mouse.buttonsStr.usButtonData);
-            float numTicks = e.WheelDelta / wheelDelta;
-
-            e.IsHorizontalScroll = rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.HWHEEL);
-            e.ScrollDelta = numTicks;
-
-            if (e.IsHorizontalScroll)
-            {
-                var scrollChars = defaultScrollCharsPerWheelDelta;
-                SystemParametersInfo(SPI.GETWHEELSCROLLCHARS, 0, ref scrollChars, 0);
-                e.ScrollDelta *= scrollChars;
-            }
-            else
-            {
-                var scrollLines = defaultScrollLinesPerWheelDelta;
-                SystemParametersInfo(SPI.GETWHEELSCROLLLINES, 0, ref scrollLines, 0);
-                if (scrollLines == uint.MaxValue)
-                    e.IsScrollByPage = true;
-                else
-                    e.ScrollDelta *= scrollLines;
-            }
+            e.WheelDelta = (short)rawInput.Mouse.buttons.usButtonData;
+            e.IsHorizontalScroll = rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.HWHEEL);
+            e.ScrollDelta = GetScrollDelta(e.WheelDelta, e.IsHorizontalScroll, out bool isScrollByPage);
+            e.IsScrollByPage = isScrollByPage;
 
             RaiseMouseWheel(e);
         }
@@ -146,15 +125,15 @@ namespace PinkWpf
         {
             var e = new MouseButtonEventArgs(_mousePosition);
 
-            if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.LEFT_BUTTON_DOWN))
+            if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.LEFT_BUTTON_DOWN))
                 e.Button = MouseButton.Left;
-            else if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.RIGHT_BUTTON_DOWN))
+            else if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.RIGHT_BUTTON_DOWN))
                 e.Button = MouseButton.Right;
-            else if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.MIDDLE_BUTTON_DOWN))
+            else if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.MIDDLE_BUTTON_DOWN))
                 e.Button = MouseButton.Middle;
-            else if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_4_DOWN))
+            else if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_4_DOWN))
                 e.Button = MouseButton.XButton1;
-            else if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_5_DOWN))
+            else if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_5_DOWN))
                 e.Button = MouseButton.XButton2;
 
             RaiseMouseDown(e);
@@ -164,15 +143,15 @@ namespace PinkWpf
         {
             var e = new MouseButtonEventArgs(_mousePosition);
 
-            if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.LEFT_BUTTON_UP))
+            if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.LEFT_BUTTON_UP))
                 e.Button = MouseButton.Left;
-            else if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.RIGHT_BUTTON_UP))
+            else if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.RIGHT_BUTTON_UP))
                 e.Button = MouseButton.Right;
-            else if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.MIDDLE_BUTTON_UP))
+            else if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.MIDDLE_BUTTON_UP))
                 e.Button = MouseButton.Middle;
-            else if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_4_UP))
+            else if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_4_UP))
                 e.Button = MouseButton.XButton1;
-            else if (rawInput.mouse.buttonsStr.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_5_UP))
+            else if (rawInput.Mouse.buttons.usButtonFlags.HasFlag(RI_MOUSE.BUTTON_5_UP))
                 e.Button = MouseButton.XButton2;
 
             RaiseMouseUp(e);

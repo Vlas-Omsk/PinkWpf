@@ -1,18 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Markup;
 
 namespace PinkWpf.MarkupExtensions.Converters
 {
-    [ValueConversion(typeof(double), typeof(double), ParameterType = typeof(double))]
-    public class MultiplyConverter : MarkupExtension, IValueConverter
+    [ValueConversion(typeof(IDictionary), typeof(object), ParameterType = typeof(object))]
+    public class DictionaryConverter : MarkupExtension, IValueConverter
     {
-        private static MultiplyConverter _instance;
+        private static DictionaryConverter _instance;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return System.Convert.ToDouble(value) * (double)parameter;
+            var dictionary = (IDictionary)value;
+            if (dictionary.Contains(parameter))
+                return dictionary[parameter];
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -22,7 +26,7 @@ namespace PinkWpf.MarkupExtensions.Converters
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return _instance ?? (_instance = new MultiplyConverter());
+            return _instance ?? (_instance = new DictionaryConverter());
         }
     }
 }

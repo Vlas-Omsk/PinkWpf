@@ -9,9 +9,8 @@ namespace PinkWpf.NativeStructs
         [MarshalAs(UnmanagedType.U4)]
         public RIM dwType;
         [MarshalAs(UnmanagedType.U4)]
-        public int dwSize;
+        public uint dwSize;
         public IntPtr hDevice;
-        [MarshalAs(UnmanagedType.U4)]
-        public int wParam;
+        public IntPtr wParam;
     }
 }

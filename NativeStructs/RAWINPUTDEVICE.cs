@@ -7,12 +7,12 @@ namespace PinkWpf.NativeStructs
     public struct RAWINPUTDEVICE
     {
         /// <summary>Top level collection Usage page for the raw input device.</summary>
-        public HID UsagePage;
+        public HID usUsagePage;
         /// <summary>Top level collection Usage for the raw input device. </summary>
-        public HID Usage;
+        public HID usUsage;
         /// <summary>Mode flag that specifies how to interpret the information provided by UsagePage and Usage.</summary>
-        public RIDEV Flags;
+        public RIDEV dwFlags;
         /// <summary>Handle to the target device. If NULL, it follows the keyboard focus.</summary>
-        public IntPtr WindowHandle;
+        public IntPtr hwndTarget;
     }
 }

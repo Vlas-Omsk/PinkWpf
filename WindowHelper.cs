@@ -13,6 +13,10 @@ namespace PinkWpf
         public HwndSource HwndSource { get; private set; }
         public bool IsInstalled { get; private set; }
 
+        private const int _wheelDelta = 120;
+        private const uint _defaultScrollLinesPerWheelDelta = 3;
+        private const uint _defaultScrollCharsPerWheelDelta = 1;
+
         public WindowHelper(Window window)
         {
             Window = window;
@@ -39,7 +43,7 @@ namespace PinkWpf
         [DllImport("user32.dll")]
         private static extern int GetSystemMetrics(uint smIndex);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         private static extern bool RegisterRawInputDevices([MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] RAWINPUTDEVICE[] pRawInputDevices, int uiNumDevices, int cbSize);
 
         [DllImport("User32.dll")]
@@ -101,7 +105,7 @@ namespace PinkWpf
             HwndSource.AddHook(InfinityWindowWndProc);
         }
 
-        public void HideCloseButton()
+        public void HideWindowSysMenu()
         {
             SetWindowLong(Hwnd, GWL.STYLE, GetWindowLong(Hwnd, GWL.STYLE) & ~(int)WS.SYSMENU);
         }
@@ -112,6 +116,31 @@ namespace PinkWpf
             MONITORINFO info = new MONITORINFO();
             GetMonitorInfo(new HandleRef(null, monitor), info);
             return info;
+        }
+
+        public float GetScrollDelta(float wheelDelta, bool isHorizontalScroll, out bool isScrollByPage)
+        {
+            isScrollByPage = false;
+
+            var scrollDelta = wheelDelta / _wheelDelta;
+
+            if (isHorizontalScroll)
+            {
+                var scrollChars = _defaultScrollCharsPerWheelDelta;
+                SystemParametersInfo(SPI.GETWHEELSCROLLCHARS, 0, ref scrollChars, 0);
+                scrollDelta *= scrollChars;
+            }
+            else
+            {
+                var scrollLines = _defaultScrollLinesPerWheelDelta;
+                SystemParametersInfo(SPI.GETWHEELSCROLLLINES, 0, ref scrollLines, 0);
+                if (scrollLines == uint.MaxValue)
+                    isScrollByPage = true;
+                else
+                    scrollDelta *= scrollLines;
+            }
+
+            return scrollDelta;
         }
     }
 }
