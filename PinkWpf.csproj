@@ -73,6 +73,7 @@
     <Compile Include="MarkupExtensions\Converters\MultiValueConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\PathConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\StringToRegexConverter.cs" />
+    <Compile Include="MarkupExtensions\Converters\ToStringConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\ValueConverter.cs" />
     <Compile Include="MouseButtonEventArgs.cs" />
     <Compile Include="MouseInputEventArgs.cs" />

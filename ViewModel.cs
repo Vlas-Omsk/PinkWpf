@@ -1,28 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
-using System.Reflection;
 
 namespace PinkWpf
 {
     public abstract class ViewModel<T> : NotifyPropertyChanged where T : FrameworkElement
     {
-        public Command OpenLinkCommand { get; private set; }
+        public Command OpenLinkCommand { get; private set; } = new Command(e => OpenLink(e?.ToString()));
         public T View { get; private set; }
-
-        public ViewModel()
-        {
-            OpenLinkCommand = new Command(e => OpenLink(e?.ToString()));
-        }
 
         public void BindProperty(INotifyPropertyChanged notifyPropertyChanged, string sourceName, string targetName)
         {
             notifyPropertyChanged.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == sourceName)
-                    OnPropertyChanged(targetName);
+                    RaisePropertyChanged(targetName);
             };
         }
 

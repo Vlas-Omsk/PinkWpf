@@ -12,7 +12,7 @@ namespace PinkWpf.MarkupExtensions.Converters
         {
             if (parameter != null && (bool)parameter)
                 value = !(bool)value;
-            return (bool)value ? Visibility.Visible : Visibility.Hidden;
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }
