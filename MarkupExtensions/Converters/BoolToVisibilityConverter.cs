@@ -5,14 +5,15 @@ using System.Windows.Data;
 
 namespace PinkWpf.MarkupExtensions.Converters
 {
-    [ValueConversion(typeof(bool), typeof(Visibility), ParameterType = typeof(bool))]
+    [ValueConversion(typeof(bool), typeof(Visibility), ParameterType = typeof(string))]
     public class BoolToVisibilityConverter : ValueConverter
     {
         protected override object ConvertInternal(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter != null && (bool)parameter)
-                value = !(bool)value;
-            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+            var nonVisible = Visibility.Collapsed;
+            if (parameter != null)
+                nonVisible = (Visibility)Enum.Parse(typeof(Visibility), parameter.ToString());
+            return (bool)value ? Visibility.Visible : nonVisible;
         }
     }
 }

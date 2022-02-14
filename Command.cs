@@ -6,37 +6,31 @@ namespace PinkWpf
     public class Command : ICommand
     {
         private Action<object> _execute;
-        private Func<object, bool> _canExecute;
+        private bool _canExecute = true;
+
+        public Command(Action execute) : this(o => execute())
+        {
+        }
+
+        public Command(Action<object> execute)
+        {
+            _execute = execute;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute;
+        }
+
+        public void Execute(object parameter)
+        {
+            _execute?.Invoke(parameter);
+        }
 
         public event EventHandler CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
-        }
-
-        public Command(Action<object> execute, Func<object, bool> canExecute = null)
-        {
-            _execute = execute;
-            _canExecute = canExecute;
-        }
-
-        public Command(Action execute, Func<object, bool> canExecute = null)
-        {
-            if (execute != null)
-                _execute = new Action<object>(o => { execute(); });
-            else
-                _execute = new Action<object>(o => { });
-            _canExecute = canExecute;
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute == null || _canExecute(parameter);
-        }
-
-        public void Execute(object parameter)
-        {
-            _execute(parameter);
         }
     }
 }

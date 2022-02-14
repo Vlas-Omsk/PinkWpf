@@ -67,17 +67,24 @@
     <Compile Include="Animation\PathMarkupSyntaxParser\Figure.cs" />
     <Compile Include="Animation\PathMarkupSyntaxParser\GeometryData.cs" />
     <Compile Include="Animation\PathMarkupSyntaxParser\Lexer.cs" />
+    <Compile Include="AsyncCommand.cs" />
     <Compile Include="Controls\BindingEvaluator.cs" />
+    <Compile Include="MarkupExtensions\Converters\BoolComposer.cs" />
+    <Compile Include="MarkupExtensions\Converters\BoolInverter.cs" />
     <Compile Include="MarkupExtensions\Converters\DictionaryConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\AddConverter.cs" />
+    <Compile Include="MarkupExtensions\Converters\IfConverter.cs" />
+    <Compile Include="MarkupExtensions\Converters\IsNullConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\MultiValueConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\PathConverter.cs" />
-    <Compile Include="MarkupExtensions\Converters\StringToRegexConverter.cs" />
+    <Compile Include="MarkupExtensions\Converters\ToRegexConverter.cs" />
+    <Compile Include="MarkupExtensions\Converters\ToColorConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\ToStringConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\ValueConverter.cs" />
-    <Compile Include="MouseButtonEventArgs.cs" />
-    <Compile Include="MouseInputEventArgs.cs" />
-    <Compile Include="MouseWheelEventArgs.cs" />
+    <Compile Include="MarkupExtensions\XDataBindingExtension.cs" />
+    <Compile Include="EventArgs\MouseButtonEventArgs.cs" />
+    <Compile Include="EventArgs\MouseInputEventArgs.cs" />
+    <Compile Include="EventArgs\MouseWheelEventArgs.cs" />
     <Compile Include="NativeStructs\GWL.cs" />
     <Compile Include="NativeStructs\HT.cs" />
     <Compile Include="NativeStructs\MONITOR.cs" />
@@ -85,6 +92,7 @@
     <Compile Include="NativeStructs\NCCALCSIZE_PARAMS.cs" />
     <Compile Include="NativeStructs\Win32Rect.cs" />
     <Compile Include="NativeStructs\WS.cs" />
+    <Compile Include="NotifyTaskCompletion.cs" />
     <Compile Include="WindowHelper.cs" />
     <Compile Include="WindowHelper_InfinityWindow.cs" />
     <Compile Include="WindowHelper_InputHook.cs" />
@@ -94,7 +102,7 @@
     <Compile Include="Animation\TextAnimation.cs" />
     <Compile Include="Animation\TextAnimationType.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="XData.cs" />
+    <Compile Include="XDataBase.cs" />
     <Compile Include="MarkupExtensions\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="MarkupExtensions\Converters\MultiplyConverter.cs" />
     <Compile Include="MarkupExtensions\SystemType.cs" />
@@ -119,6 +127,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="MarkupExtensions\AttachedProperties\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

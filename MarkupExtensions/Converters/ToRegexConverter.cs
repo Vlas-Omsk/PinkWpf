@@ -6,7 +6,7 @@ using System.Windows.Data;
 namespace PinkWpf.MarkupExtensions.Converters
 {
     [ValueConversion(typeof(string), typeof(Regex))]
-    public class StringToRegexConverter : ValueConverter
+    public class ToRegexConverter : ValueConverter
     {
         protected override object ConvertInternal(object value, Type targetType, object parameter, CultureInfo culture)
         {
