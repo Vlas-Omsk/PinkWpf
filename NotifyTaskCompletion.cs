@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 
 namespace PinkWpf
 {
-    public sealed class NotifyTaskCompletion : NotifyPropertyChanged
+    public sealed class NotifyTaskCompletion : ObservableObject
     {
-        public Task Task { get; private set; }
+        public Task Task { get; private set; } = Task.CompletedTask;
+        public bool ThrowOnException { get; set; }
+
         public TaskStatus Status => Task.Status;
         public bool IsCompleted => Task.IsCompleted;
         public bool IsSuccessfullyCompleted => Task.Status == TaskStatus.RanToCompletion;
@@ -13,14 +15,22 @@ namespace PinkWpf
         public bool IsFaulted => Task.IsFaulted;
         public AggregateException Exception => Task.Exception;
 
-        public async void WatchTask(Task task)
+        public async void Run(Task task)
         {
-            await WatchTaskAsync(task);
+            await RunAsync(task);
         }
 
-        public async Task WatchTaskAsync(Task task)
+        public async Task<T> RunAsync<T>(Task<T> task)
+        {
+            await RunAsync((Task)task);
+            return task.Result;
+        }
+
+        public async Task RunAsync(Task task)
         {
             Task = task;
+
+            RaiseExecution();
 
             RaisePropertyChanged(nameof(Status));
             RaisePropertyChanged(nameof(IsCompleted));
@@ -31,7 +41,7 @@ namespace PinkWpf
 
             try
             {
-                await task;
+                await Task;
             }
             catch
             {
@@ -39,11 +49,11 @@ namespace PinkWpf
 
             RaisePropertyChanged(nameof(Status));
             RaisePropertyChanged(nameof(IsCompleted));
-            if (task.IsCanceled)
+            if (Task.IsCanceled)
             {
                 RaisePropertyChanged(nameof(IsCanceled));
             }
-            else if (task.IsFaulted)
+            else if (Task.IsFaulted)
             {
                 RaisePropertyChanged(nameof(IsFaulted));
                 RaisePropertyChanged(nameof(Exception));
@@ -52,6 +62,24 @@ namespace PinkWpf
             {
                 RaisePropertyChanged(nameof(IsSuccessfullyCompleted));
             }
+
+            RaiseExecuted();
+
+            if (Task.IsFaulted && ThrowOnException)
+                throw Exception;
         }
+
+        private void RaiseExecution()
+        {
+            Execution?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void RaiseExecuted()
+        {
+            Executed?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event EventHandler Execution;
+        public event EventHandler Executed;
     }
 }

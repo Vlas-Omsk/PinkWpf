@@ -1,71 +1,125 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace PinkWpf
 {
-    public abstract class ViewModel<T> : NotifyPropertyChanged where T : FrameworkElement
+    public abstract class ViewModel : INavigationListener
     {
-        public T View { get; private set; }
         public NotifyTaskCompletion Initialization { get; } = new NotifyTaskCompletion();
+        public NotifyTaskCompletion Navigation { get; } = new NotifyTaskCompletion();
 
         public ViewModel()
         {
-            Initialization.WatchTask(OnInitializationAsync());
+            Initialization.Executed += OnExecuted;
+            Navigation.Executed += OnExecuted;
+
+#if DEBUG
+            Initialization.ThrowOnException = true;
+            Navigation.ThrowOnException = true;
+
+            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+#endif
+                Initialization.Run(OnInitializationAsync());
         }
 
-        #region OpenLinkCommand
-        public Command OpenLinkCommand { get; } = new Command(e => OpenLink(e?.ToString()));
+        #region INavigationListener
 
-        public static void OpenLink(string link)
+        #region Navigate
+        Task<bool> INavigationListener.Navigating()
         {
-            if (link == null)
-                return;
+            return Navigation.RunAsync(OnNavigatingAsync());
+        }
 
-            Process proc = new Process();
-            proc.StartInfo.FileName = "cmd";
-            proc.StartInfo.Arguments = "/c start " + link;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            proc.Start();
+        /// <inheritdoc cref="INavigationListener.Navigating"/>
+        protected virtual Task<bool> OnNavigatingAsync()
+        {
+            return Task.FromResult(true);
+        }
+
+        Task INavigationListener.Navigated()
+        {
+            return Navigation.RunAsync(OnNavigatedAsync());
+        }
+
+        /// <inheritdoc cref="INavigationListener.Navigated"/>
+        protected virtual Task OnNavigatedAsync()
+        {
+            return Task.CompletedTask;
         }
         #endregion
 
-        public void BindProperty(INotifyPropertyChanged notifyPropertyChanged, string sourceName, string targetName)
+        #region NavigateTo
+        Task<bool> INavigationListener.NavigatingTo()
         {
-            notifyPropertyChanged.PropertyChanged += (sender, e) =>
-            {
-                if (e.PropertyName == sourceName)
-                    RaisePropertyChanged(targetName);
-            };
+            return Navigation.RunAsync(OnNavigatingToAsync());
         }
 
+        /// <inheritdoc cref="INavigationListener.NavigatingTo"/>
+        protected virtual Task<bool> OnNavigatingToAsync()
+        {
+            return Task.FromResult(true);
+        }
+
+        Task INavigationListener.NavigatedTo()
+        {
+            return Navigation.RunAsync(OnNavigatedToAsync());
+        }
+
+        /// <inheritdoc cref="INavigationListener.NavigatedTo"/>
+        protected virtual Task OnNavigatedToAsync()
+        {
+            return Task.CompletedTask;
+        }
+        #endregion
+
+        #region Destroy
+        Task<bool> INavigationListener.Destroying()
+        {
+            return Navigation.RunAsync(OnDestroyingAsync());
+        }
+
+        /// <inheritdoc cref="INavigationListener.Destroying"/>
+        protected virtual Task<bool> OnDestroyingAsync()
+        {
+            return Task.FromResult(true);
+        }
+
+        Task INavigationListener.Destroyed()
+        {
+            return Navigation.RunAsync(OnDestroyedAsync());
+        }
+
+        /// <inheritdoc cref="INavigationListener.Destroyed"/>
+        protected virtual Task OnDestroyedAsync()
+        {
+            return Task.CompletedTask;
+        }
+        #endregion
+
+        #endregion
+
+        /// <summary>
+        /// Происходит при создании элемента
+        /// </summary>
         protected virtual Task OnInitializationAsync()
         {
             return Task.CompletedTask;
         }
 
-        protected virtual void OnViewLoaded()
+        private void OnExecuted(object sender, EventArgs e)
         {
+            var notifyTaskCompletion = (NotifyTaskCompletion)sender;
+            if (notifyTaskCompletion.IsFaulted)
+                RaiseUnhandledException(notifyTaskCompletion.Exception);
         }
 
-        public static void BindViewModel(T element)
+        private void RaiseUnhandledException(Exception exception)
         {
-            element.DataContextChanged += (sender, e) =>
-            {
-                if (!(e.NewValue is ViewModel<T> dataContext))
-                    return;
-
-                dataContext.View = (T)sender;
-                if (dataContext.View.IsLoaded)
-                    dataContext.OnViewLoaded();
-                else
-                    dataContext.View.Loaded += (sender2, e2) => dataContext.OnViewLoaded();
-            };
+            UnhandledException?.Invoke(this, exception);
         }
+
+        public static event EventHandler<Exception> UnhandledException;
     }
 }

@@ -5,43 +5,33 @@ using System.Windows.Markup;
 
 namespace PinkWpf.MarkupExtensions.Converters
 {
-    public abstract class ValueConverter : MarkupExtension, IValueConverter
+    public abstract class ValueConverter : MarkupExtension, IValueConverter, IUniversalConverter
     {
-        public IValueConverter Converter { get; set; }
-        public CultureInfo ConverterCulture { get; set; }
-        public object ConverterParameter { get; set; }
-        public object TargetNullValue { get; set; }
-        public bool PassParameter { get; set; } = false;
-        public bool PassCulture { get; set; } = true;
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
-                return TargetNullValue;
-            value = ConvertInternal(value, targetType, parameter, culture);
-            if (value == null)
-                return TargetNullValue;
-            if (Converter != null)
-            {
-                if (!PassParameter)
-                    parameter = ConverterParameter;
-                if (!PassCulture)
-                    culture = ConverterCulture;
-                value = Converter.Convert(value, targetType, parameter, culture);
-            }
-            if (value == null)
-                return TargetNullValue;
-            return value;
+            var args = new ConverterArgs(new[] { value }, new Type[] { targetType }, parameter, culture);
+            return Convert(args);
         }
 
-        public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var args = new ConverterArgs(new[] { value }, new Type[] { targetType }, parameter, culture);
+            return ConvertBack(args)[0];
+        }
+
+        #region IUniversalConverter
+        public virtual object Convert(ConverterArgs e)
         {
             throw new NotImplementedException();
         }
 
-        protected abstract object ConvertInternal(object value, Type targetType, object parameter, CultureInfo culture);
+        public virtual object[] ConvertBack(ConverterArgs e)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        public sealed override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;
         }
