@@ -60,7 +60,7 @@ namespace PinkWpf.Controls
 
         #region IsGapProperty
         public static readonly DependencyProperty IsGapProperty = DependencyProperty.RegisterAttached(
-           "IsGap", typeof(bool), typeof(PinkGrid),
+           nameof(IsGapProperty), typeof(bool), typeof(PinkGrid),
            new FrameworkPropertyMetadata());
 
         public static bool GetIsGap(DependencyObject dependencyObject)
@@ -76,7 +76,7 @@ namespace PinkWpf.Controls
 
         #region RelativeColumnProperty
         public static readonly DependencyProperty RelativeColumnProperty = DependencyProperty.RegisterAttached(
-           "RelativeColumn", typeof(int), typeof(PinkGrid),
+           nameof(RelativeColumnProperty), typeof(int), typeof(PinkGrid),
            new FrameworkPropertyMetadata(0, OnRelativeColumnChanged));
 
         public static int GetRelativeColumn(UIElement element)
@@ -101,7 +101,7 @@ namespace PinkWpf.Controls
 
         #region RelativeRowProperty
         public static readonly DependencyProperty RelativeRowProperty = DependencyProperty.RegisterAttached(
-           "RelativeRow", typeof(int), typeof(PinkGrid),
+           nameof(RelativeRowProperty), typeof(int), typeof(PinkGrid),
            new FrameworkPropertyMetadata(0, OnRelativeRowChanged));
 
         public static int GetRelativeRow(UIElement element)
@@ -126,7 +126,7 @@ namespace PinkWpf.Controls
 
         #region RelativeColumnSpanProperty
         public static readonly DependencyProperty RelativeColumnSpanProperty = DependencyProperty.RegisterAttached(
-           "RelativeColumnSpan", typeof(int), typeof(PinkGrid),
+           nameof(RelativeColumnSpanProperty), typeof(int), typeof(PinkGrid),
            new FrameworkPropertyMetadata(1, OnRelativeColumnSpanChanged));
 
         public static int GetRelativeColumnSpan(UIElement element)
@@ -149,7 +149,7 @@ namespace PinkWpf.Controls
 
         #region RelativeRowSpanProperty
         public static readonly DependencyProperty RelativeRowSpanProperty = DependencyProperty.RegisterAttached(
-           "RelativeRowSpan", typeof(int), typeof(PinkGrid),
+           nameof(RelativeRowSpanProperty), typeof(int), typeof(PinkGrid),
            new FrameworkPropertyMetadata(1, OnRelativeRowSpanChanged));
 
         public static int GetRelativeRowSpan(UIElement element)

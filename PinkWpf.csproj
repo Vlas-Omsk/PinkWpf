@@ -67,6 +67,7 @@
     <Compile Include="Animation\PathMarkupSyntaxParser\Figure.cs" />
     <Compile Include="Animation\PathMarkupSyntaxParser\GeometryData.cs" />
     <Compile Include="Animation\PathMarkupSyntaxParser\Lexer.cs" />
+    <Compile Include="Extensions\DependencyObjectExtensions.cs" />
     <Compile Include="Input\AsyncCommand.cs" />
     <Compile Include="Controls\BindingEvaluator.cs" />
     <Compile Include="Controls\PinkGrid.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Controls\PinkTextBox.cs" />
     <Compile Include="ConvertHelper.cs" />
     <Compile Include="EnumHelper.cs" />
+    <Compile Include="MarkupExtensions\AttachedProperties\DataGridColumnExtensions.cs" />
     <Compile Include="MarkupExtensions\AttachedProperties\DesignMode.cs" />
     <Compile Include="INavigationListener.cs" />
     <Compile Include="MarkupExtensions\Converters\CompositeConverter.cs" />

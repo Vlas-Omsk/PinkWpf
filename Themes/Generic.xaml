@@ -22,7 +22,7 @@
                                                 CanContentScroll="{TemplateBinding CanContentScroll}"
                                                 Margin="{TemplateBinding Padding}">
                             <ScrollContentPresenter.Content>
-                                <controls:PinkScrollInfo>
+                                <controls:PinkScrollInfo Focusable="False">
                                     <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
                                 </controls:PinkScrollInfo>
                             </ScrollContentPresenter.Content>

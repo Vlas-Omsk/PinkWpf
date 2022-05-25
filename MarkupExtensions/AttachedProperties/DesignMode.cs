@@ -7,6 +7,8 @@ namespace PinkWpf.MarkupExtensions.AttachedProperties
 {
     public sealed class DesignMode : DependencyObject
     {
+        #region StyleProperty
+
         public static readonly DependencyProperty StyleProperty = DependencyProperty.RegisterAttached(
            nameof(StyleProperty), typeof(Style), typeof(DesignMode),
            new FrameworkPropertyMetadata(null, OnStyleChanged));
@@ -26,5 +28,7 @@ namespace PinkWpf.MarkupExtensions.AttachedProperties
         {
             dependencyObject.SetValue(StyleProperty, value);
         }
+
+        #endregion
     }
 }

@@ -11,6 +11,7 @@ namespace PinkWpf.Controls
             set => SetValue(ValueProperty, value);
         }
 
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(BindingEvaluator));
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            nameof(Value), typeof(object), typeof(BindingEvaluator));
     }
 }

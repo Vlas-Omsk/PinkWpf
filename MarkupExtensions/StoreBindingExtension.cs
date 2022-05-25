@@ -60,10 +60,10 @@ namespace PinkWpf.MarkupExtensions
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            var provideValuetarget = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
-            if (provideValuetarget.TargetObject is DependencyObject obj && DesignerProperties.GetIsInDesignMode(obj))
+            var provideValueTarget = (IProvideValueTarget)serviceProvider.GetService(typeof(IProvideValueTarget));
+            if (provideValueTarget.TargetObject is DependencyObject obj && DesignerProperties.GetIsInDesignMode(obj))
             {
-                var dependencyProperty = (DependencyProperty)provideValuetarget.TargetProperty;
+                var dependencyProperty = (DependencyProperty)provideValueTarget.TargetProperty;
 
                 return dependencyProperty.PropertyType.IsValueType ?
                     Activator.CreateInstance(dependencyProperty.PropertyType) :
