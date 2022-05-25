@@ -28,6 +28,14 @@ namespace PinkWpf.Controls
         {
             KeyFrames = new DoubleKeyFrameCollection() { new SplineDoubleKeyFrame() }
         };
+        private DoubleAnimationUsingKeyFrames _verticalDiscreteScrollAnimation = new DoubleAnimationUsingKeyFrames()
+        {
+            KeyFrames = new DoubleKeyFrameCollection() { new DiscreteDoubleKeyFrame() { KeyTime = TimeSpan.Zero } }
+        };
+        private DoubleAnimationUsingKeyFrames _horizontalDiscreteScrollAnimation = new DoubleAnimationUsingKeyFrames()
+        {
+            KeyFrames = new DoubleKeyFrameCollection() { new DiscreteDoubleKeyFrame() { KeyTime = TimeSpan.Zero } }
+        };
 
         public double ExtentHeight => _extent.Height;
         public double ExtentWidth => _extent.Width;
@@ -73,35 +81,68 @@ namespace PinkWpf.Controls
 
         public void SetHorizontalOffset(double offset)
         {
+            SetHorizontalOffset(offset, true);
+        }
+
+        private void SetHorizontalOffset(double offset, bool useAnimation)
+        {
             offset = Math.Max(0, Math.Min(offset, ExtentWidth - ViewportWidth));
+
             if (offset != _targetOffset.X)
             {
+                System.Diagnostics.Debug.WriteLine(offset + " " + useAnimation);
+
                 _targetOffset.X = offset;
 
-                var pinkScrollViewer = GetPinkScrollViewer();
-                var splineDoubleKeyFrame = (SplineDoubleKeyFrame)_horizontalScrollAnimation.KeyFrames[0];
-                splineDoubleKeyFrame.Value = offset;
-                splineDoubleKeyFrame.KeyTime = pinkScrollViewer.ScrollingTime;
-                splineDoubleKeyFrame.KeySpline = pinkScrollViewer.ScrollingSpline;
+                if (useAnimation)
+                {
+                    var pinkScrollViewer = GetPinkScrollViewer();
+                    var splineDoubleKeyFrame = (SplineDoubleKeyFrame)_horizontalScrollAnimation.KeyFrames[0];
+                    splineDoubleKeyFrame.Value = offset;
+                    splineDoubleKeyFrame.KeyTime = pinkScrollViewer.ScrollingTime;
+                    splineDoubleKeyFrame.KeySpline = pinkScrollViewer.ScrollingSpline;
 
-                BeginAnimation(HorizontalOffsetProperty, _horizontalScrollAnimation, HandoffBehavior.Compose);
+                    BeginAnimation(HorizontalOffsetProperty, _horizontalScrollAnimation, HandoffBehavior.Compose);
+                }
+                else
+                {
+                    var discreteDoubleKeyFrame = (DiscreteDoubleKeyFrame)_horizontalDiscreteScrollAnimation.KeyFrames[0];
+                    discreteDoubleKeyFrame.Value = offset;
+
+                    BeginAnimation(HorizontalOffsetProperty, _horizontalDiscreteScrollAnimation);
+                }
             }
         }
 
         public void SetVerticalOffset(double offset)
+        {
+            SetVerticalOffset(offset, true);
+        }
+
+        private void SetVerticalOffset(double offset, bool useAnimation)
         {
             offset = Math.Max(0, Math.Min(offset, ExtentHeight - ViewportHeight));
             if (offset != _targetOffset.Y)
             {
                 _targetOffset.Y = offset;
 
-                var pinkScrollViewer = GetPinkScrollViewer();
-                var splineDoubleKeyFrame = (SplineDoubleKeyFrame)_verticalScrollAnimation.KeyFrames[0];
-                splineDoubleKeyFrame.Value = offset;
-                splineDoubleKeyFrame.KeyTime = pinkScrollViewer.ScrollingTime;
-                splineDoubleKeyFrame.KeySpline = pinkScrollViewer.ScrollingSpline;
+                if (useAnimation)
+                {
+                    var pinkScrollViewer = GetPinkScrollViewer();
+                    var splineDoubleKeyFrame = (SplineDoubleKeyFrame)_verticalScrollAnimation.KeyFrames[0];
+                    splineDoubleKeyFrame.Value = offset;
+                    splineDoubleKeyFrame.KeyTime = pinkScrollViewer.ScrollingTime;
+                    splineDoubleKeyFrame.KeySpline = pinkScrollViewer.ScrollingSpline;
 
-                BeginAnimation(VerticalOffsetProperty, _verticalScrollAnimation, HandoffBehavior.Compose);
+                    BeginAnimation(VerticalOffsetProperty, _verticalScrollAnimation, HandoffBehavior.Compose);
+                }
+                else
+                {
+                    var discreteDoubleKeyFrame = (DiscreteDoubleKeyFrame)_verticalDiscreteScrollAnimation.KeyFrames[0];
+                    discreteDoubleKeyFrame.Value = offset;
+
+                    BeginAnimation(VerticalOffsetProperty, _verticalDiscreteScrollAnimation);
+                }
             }
         }
 
@@ -189,6 +230,9 @@ namespace PinkWpf.Controls
             _extent = extent;
             _viewport = viewport;
 
+            if (ScrollOwner != null)
+                ScrollOwner.InvalidateScrollInfo();
+
             var scrollWidth = ExtentWidth - ViewportWidth;
             var scrollHeight = ExtentHeight - ViewportHeight;
             if (scrollWidth < 0)
@@ -196,13 +240,10 @@ namespace PinkWpf.Controls
             if (scrollHeight < 0)
                 scrollHeight = 0;
 
-            if (_targetOffset.X > scrollWidth)
-                SetHorizontalOffset(scrollWidth);
-            if (_targetOffset.Y > scrollHeight)
-                SetVerticalOffset(scrollHeight);
-
-            if (ScrollOwner != null)
-                ScrollOwner.InvalidateScrollInfo();
+            if (_targetOffset.X >= scrollWidth)
+                SetHorizontalOffset(scrollWidth, false);
+            if (_targetOffset.Y >= scrollHeight)
+                SetVerticalOffset(scrollHeight, false);
         }
 
         private PinkScrollViewer GetPinkScrollViewer()
@@ -218,18 +259,12 @@ namespace PinkWpf.Controls
             get => (double)GetValue(HorizontalOffsetProperty);
         }
 
-        private void SetCurrentHorizontalOffset(double value)
-        {
-            SetCurrentValue(HorizontalOffsetProperty, value);
-        }
-
         internal readonly static DependencyProperty HorizontalOffsetProperty =
             DependencyProperty.Register(nameof(HorizontalOffset), typeof(double), typeof(PinkScrollInfo), new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsArrange, OnHorizontalOffsetChanged));
 
         private static void OnHorizontalOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pinkScrollInfo = (PinkScrollInfo)d;
-            pinkScrollInfo.VisualOffset = new Vector(-(double)e.NewValue, pinkScrollInfo.VerticalOffset);
             pinkScrollInfo.ScrollOwner.InvalidateScrollInfo();
         }
         #endregion
@@ -240,18 +275,12 @@ namespace PinkWpf.Controls
             get => (double)GetValue(VerticalOffsetProperty);
         }
 
-        private void SetCurrentVerticalOffset(double value)
-        {
-            SetCurrentValue(VerticalOffsetProperty, value);
-        }
-
         internal readonly static DependencyProperty VerticalOffsetProperty =
             DependencyProperty.Register(nameof(VerticalOffset), typeof(double), typeof(PinkScrollInfo), new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsArrange, OnVerticalOffsetChanged));
 
         private static void OnVerticalOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pinkScrollInfo = (PinkScrollInfo)d;
-            pinkScrollInfo.VisualOffset = new Vector(pinkScrollInfo.HorizontalOffset, -(double)e.NewValue);
             pinkScrollInfo.ScrollOwner.InvalidateScrollInfo();
         }
         #endregion

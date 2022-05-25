@@ -97,6 +97,7 @@
     <Compile Include="MarkupExtensions\Converters\Types\BoolToVisibility.cs" />
     <Compile Include="MarkupExtensions\Converters\Types\DictionaryGetByKey.cs" />
     <Compile Include="MarkupExtensions\Converters\Types\EnumValueToValueMetaData.cs" />
+    <Compile Include="MarkupExtensions\Converters\Types\ToArray.cs" />
     <Compile Include="MarkupExtensions\EnumToValuesMetaData.cs" />
     <Compile Include="MarkupExtensions\Converters\Types\StringToColor.cs" />
     <Compile Include="MarkupExtensions\Converters\Format.cs" />

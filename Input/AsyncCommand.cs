@@ -13,9 +13,6 @@ namespace PinkWpf.Input
         public AsyncCommand(Func<object, Task> execute)
         {
             _execute = execute;
-
-            Execution.Executed += OnExecuted;
-            Execution.ThrowOnException = true;
         }
 
         public AsyncCommand(Func<Task> execute) : this(o => execute())
@@ -53,19 +50,5 @@ namespace PinkWpf.Input
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
         }
-
-        private void OnExecuted(object sender, EventArgs e)
-        {
-            var notifyTaskCompletion = (NotifyTaskCompletion)sender;
-            if (notifyTaskCompletion.IsFaulted)
-                RaiseUnhandledException(notifyTaskCompletion.Exception);
-        }
-
-        private void RaiseUnhandledException(Exception exception)
-        {
-            UnhandledException?.Invoke(this, exception);
-        }
-
-        public static event EventHandler<Exception> UnhandledException;
     }
 }

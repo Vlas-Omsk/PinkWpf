@@ -12,13 +12,7 @@ namespace PinkWpf
 
         public ViewModel()
         {
-            Initialization.Executed += OnExecuted;
-            Navigation.Executed += OnExecuted;
-
 #if DEBUG
-            Initialization.ThrowOnException = true;
-            Navigation.ThrowOnException = true;
-
             if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
 #endif
                 Initialization.Run(OnInitializationAsync());
@@ -107,19 +101,5 @@ namespace PinkWpf
         {
             return Task.CompletedTask;
         }
-
-        private void OnExecuted(object sender, EventArgs e)
-        {
-            var notifyTaskCompletion = (NotifyTaskCompletion)sender;
-            if (notifyTaskCompletion.IsFaulted)
-                RaiseUnhandledException(notifyTaskCompletion.Exception);
-        }
-
-        private void RaiseUnhandledException(Exception exception)
-        {
-            UnhandledException?.Invoke(this, exception);
-        }
-
-        public static event EventHandler<Exception> UnhandledException;
     }
 }

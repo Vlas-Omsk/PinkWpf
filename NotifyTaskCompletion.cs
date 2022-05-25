@@ -6,7 +6,7 @@ namespace PinkWpf
     public sealed class NotifyTaskCompletion : ObservableObject
     {
         public Task Task { get; private set; } = Task.CompletedTask;
-        public bool ThrowOnException { get; set; }
+        public bool ThrowOnException { get; set; } = true;
 
         public TaskStatus Status => Task.Status;
         public bool IsCompleted => Task.IsCompleted;

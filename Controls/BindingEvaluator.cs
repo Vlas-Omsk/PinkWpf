@@ -5,12 +5,12 @@ namespace PinkWpf.Controls
 {
     public class BindingEvaluator : FrameworkElement
     {
-        public object Target
+        public object Value
         {
-            get => GetValue(TargetProperty);
-            set => SetValue(TargetProperty, value);
+            get => GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
         }
 
-        public static readonly DependencyProperty TargetProperty = DependencyProperty.Register(nameof(Target), typeof(object), typeof(BindingEvaluator));
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(BindingEvaluator));
     }
 }

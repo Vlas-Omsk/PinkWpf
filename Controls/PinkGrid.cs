@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -59,7 +60,7 @@ namespace PinkWpf.Controls
 
         #region IsGapProperty
         public static readonly DependencyProperty IsGapProperty = DependencyProperty.RegisterAttached(
-           nameof(IsGapProperty), typeof(bool), typeof(PinkGrid),
+           "IsGap", typeof(bool), typeof(PinkGrid),
            new FrameworkPropertyMetadata());
 
         public static bool GetIsGap(DependencyObject dependencyObject)
@@ -75,7 +76,7 @@ namespace PinkWpf.Controls
 
         #region RelativeColumnProperty
         public static readonly DependencyProperty RelativeColumnProperty = DependencyProperty.RegisterAttached(
-           nameof(RelativeColumnProperty), typeof(int), typeof(PinkGrid),
+           "RelativeColumn", typeof(int), typeof(PinkGrid),
            new FrameworkPropertyMetadata(0, OnRelativeColumnChanged));
 
         public static int GetRelativeColumn(UIElement element)
@@ -100,7 +101,7 @@ namespace PinkWpf.Controls
 
         #region RelativeRowProperty
         public static readonly DependencyProperty RelativeRowProperty = DependencyProperty.RegisterAttached(
-           nameof(RelativeRowProperty), typeof(int), typeof(PinkGrid),
+           "RelativeRow", typeof(int), typeof(PinkGrid),
            new FrameworkPropertyMetadata(0, OnRelativeRowChanged));
 
         public static int GetRelativeRow(UIElement element)
@@ -125,7 +126,7 @@ namespace PinkWpf.Controls
 
         #region RelativeColumnSpanProperty
         public static readonly DependencyProperty RelativeColumnSpanProperty = DependencyProperty.RegisterAttached(
-           nameof(RelativeColumnSpanProperty), typeof(int), typeof(PinkGrid),
+           "RelativeColumnSpan", typeof(int), typeof(PinkGrid),
            new FrameworkPropertyMetadata(1, OnRelativeColumnSpanChanged));
 
         public static int GetRelativeColumnSpan(UIElement element)
@@ -148,7 +149,7 @@ namespace PinkWpf.Controls
 
         #region RelativeRowSpanProperty
         public static readonly DependencyProperty RelativeRowSpanProperty = DependencyProperty.RegisterAttached(
-           nameof(RelativeRowSpanProperty), typeof(int), typeof(PinkGrid),
+           "RelativeRowSpan", typeof(int), typeof(PinkGrid),
            new FrameworkPropertyMetadata(1, OnRelativeRowSpanChanged));
 
         public static int GetRelativeRowSpan(UIElement element)
@@ -168,5 +169,141 @@ namespace PinkWpf.Controls
             SetRowSpan((UIElement)d, absoluteRowSpan);
         }
         #endregion
+
+        #region ColumnsProperty
+        public string Columns
+        {
+            get => (string)GetValue(ColumnsProperty);
+            set => SetValue(ColumnsProperty, value);
+        }
+
+        public static readonly DependencyProperty ColumnsProperty = DependencyProperty.RegisterAttached(
+            nameof(Columns), typeof(string), typeof(PinkGrid),
+            new FrameworkPropertyMetadata(OnColumnsChanged));
+
+        private static void OnColumnsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var pinkGrid = (PinkGrid)d;
+            var newValue = (string)e.NewValue;
+
+            if (string.IsNullOrEmpty(newValue))
+                return;
+
+            var split = newValue.Split(',');
+
+            for (var i = 0; i < split.Length; i++)
+            {
+                var column = split[i];
+                var isGap = false;
+
+                if (column.FirstOrDefault() == '[' && column.LastOrDefault() == ']')
+                {
+                    column = column.Substring(1, column.Length - 2);
+                    isGap = true;
+                }
+
+                ColumnDefinition definition;
+
+                if (i < pinkGrid.ColumnDefinitions.Count)
+                {
+                    definition = pinkGrid.ColumnDefinitions[i];
+                }
+                else
+                {
+                    definition = new ColumnDefinition();
+                    pinkGrid.ColumnDefinitions.Add(definition);
+                }
+
+                var columnSplit = column.Split('|');
+
+                definition.Width = GetValue(pinkGrid, columnSplit[0], (GridLength)ColumnDefinition.WidthProperty.DefaultMetadata.DefaultValue);
+                definition.MinWidth = columnSplit.Length >= 2 ?
+                    GetValue(pinkGrid, columnSplit[1], (double)ColumnDefinition.MinWidthProperty.DefaultMetadata.DefaultValue) :
+                    (double)ColumnDefinition.MinWidthProperty.DefaultMetadata.DefaultValue;
+                definition.MaxWidth = columnSplit.Length >= 3 ?
+                    GetValue(pinkGrid, columnSplit[2], (double)ColumnDefinition.MaxWidthProperty.DefaultMetadata.DefaultValue) :
+                    (double)ColumnDefinition.MaxWidthProperty.DefaultMetadata.DefaultValue;
+
+                SetIsGap(definition, isGap);
+            }
+        }
+        #endregion
+
+        #region RowsProperty
+        public string Rows
+        {
+            get => (string)GetValue(RowsProperty);
+            set => SetValue(RowsProperty, value);
+        }
+
+        public static readonly DependencyProperty RowsProperty = DependencyProperty.RegisterAttached(
+            nameof(Rows), typeof(string), typeof(PinkGrid),
+            new FrameworkPropertyMetadata(OnRowsChanged));
+
+        private static void OnRowsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var pinkGrid = (PinkGrid)d;
+            var newValue = (string)e.NewValue;
+
+            if (string.IsNullOrEmpty(newValue))
+                return;
+
+            var split = newValue.Split(',');
+
+            for (var i = 0; i < split.Length; i++)
+            {
+                var column = split[i];
+                var isGap = false;
+
+                if (column.FirstOrDefault() == '[' && column.LastOrDefault() == ']')
+                {
+                    column = column.Substring(1, column.Length - 2);
+                    isGap = true;
+                }
+
+                RowDefinition definition;
+
+                if (i < pinkGrid.RowDefinitions.Count)
+                {
+                    definition = pinkGrid.RowDefinitions[i];
+                }
+                else
+                {
+                    definition = new RowDefinition();
+                    pinkGrid.RowDefinitions.Add(definition);
+                }
+
+                var columnSplit = column.Split('|');
+
+                definition.Height = GetValue(pinkGrid, columnSplit[0], (GridLength)ColumnDefinition.WidthProperty.DefaultMetadata.DefaultValue);
+                definition.MinHeight = columnSplit.Length >= 2 ?
+                    GetValue(pinkGrid, columnSplit[1], (double)ColumnDefinition.MinWidthProperty.DefaultMetadata.DefaultValue) :
+                    (double)ColumnDefinition.MinWidthProperty.DefaultMetadata.DefaultValue;
+                definition.MaxHeight = columnSplit.Length >= 3 ?
+                    GetValue(pinkGrid, columnSplit[2], (double)ColumnDefinition.MaxWidthProperty.DefaultMetadata.DefaultValue) :
+                    (double)ColumnDefinition.MaxWidthProperty.DefaultMetadata.DefaultValue;
+
+                SetIsGap(definition, isGap);
+            }
+        }
+        #endregion
+
+        private static T GetValue<T>(FrameworkElement owner, string value, T defaultValue)
+        {
+            var converter = TypeDescriptor.GetConverter(typeof(T));
+            var isResource = false;
+
+            if (value.FirstOrDefault() == '{' && value.LastOrDefault() == '}')
+            {
+                value = value.Substring(1, value.Length - 2);
+                isResource = true;
+            }
+
+            if (string.IsNullOrEmpty(value))
+                return defaultValue;
+            if (isResource)
+                return (T)owner.FindResource(value);
+            return (T)converter.ConvertFromString(value);
+        }
     }
 }
