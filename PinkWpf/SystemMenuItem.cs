@@ -12,7 +12,7 @@ namespace PinkWpf
 
         internal MENUITEMINFO _info = new MENUITEMINFO();
 
-        private static int _counter = 0;
+        private static int _counter = 1;
 
         public SystemMenuItem(int id)
         {
