@@ -1,0 +1,50 @@
+﻿<Window x:Class="PinkWpf.Tests.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PinkWpf.Tests"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        WindowStyle="ThreeDBorderWindow"
+        ResizeMode="CanResize"
+        
+        Background="Transparent">
+
+    <Border CornerRadius="50"
+            Background="White">
+        <PinkGrid Rows="auto,auto,auto,auto,auto">
+            <TextBox x:Name="TextBox"/>
+            <TextBlock PinkGrid.RelativeRow="1"
+                       Text="{Binding Text, ElementName=TextBox}">
+                <TextBlock.Background>
+                    <MultiBinding Converter="{If ManyConverter={All CompareConverter={Equals}}, WithElse=True}"
+                                  ConverterParameter="">
+                        <Binding Path="Text" ElementName="TextBox"/>
+                        <!--IF-->
+                        <Binding>
+                            <Binding.Source>
+                                <SolidColorBrush Color="Red"/>
+                            </Binding.Source>
+                        </Binding>
+                        <!--ELSE-->
+                        <Binding>
+                            <Binding.Source>
+                                <SolidColorBrush Color="Green"/>
+                            </Binding.Source>
+                        </Binding>
+                    </MultiBinding>
+                </TextBlock.Background>
+            </TextBlock>
+            <Button Content="Min"
+                    Click="OnMinClick"
+                    PinkGrid.RelativeRow="2"/>
+            <Button Content="Max"
+                    Click="OnMaxClick"
+                    PinkGrid.RelativeRow="3"/>
+            <Button Content="Restore"
+                    Click="OnRestoreClick"
+                    PinkGrid.RelativeRow="4"/>
+        </PinkGrid>
+    </Border>
+</Window>
