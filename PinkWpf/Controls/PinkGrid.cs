@@ -193,7 +193,7 @@ namespace PinkWpf.Controls
 
             for (var i = 0; i < split.Length; i++)
             {
-                var column = split[i];
+                var column = split[i].Trim();
                 var isGap = false;
 
                 if (column.FirstOrDefault() == '[' && column.LastOrDefault() == ']')
@@ -252,7 +252,7 @@ namespace PinkWpf.Controls
 
             for (var i = 0; i < split.Length; i++)
             {
-                var column = split[i];
+                var column = split[i].Trim();
                 var isGap = false;
 
                 if (column.FirstOrDefault() == '[' && column.LastOrDefault() == ']')
@@ -275,13 +275,13 @@ namespace PinkWpf.Controls
 
                 var columnSplit = column.Split('|');
 
-                definition.Height = GetValue(pinkGrid, columnSplit[0], (GridLength)ColumnDefinition.WidthProperty.DefaultMetadata.DefaultValue);
+                definition.Height = GetValue(pinkGrid, columnSplit[0], (GridLength)RowDefinition.HeightProperty.DefaultMetadata.DefaultValue);
                 definition.MinHeight = columnSplit.Length >= 2 ?
-                    GetValue(pinkGrid, columnSplit[1], (double)ColumnDefinition.MinWidthProperty.DefaultMetadata.DefaultValue) :
-                    (double)ColumnDefinition.MinWidthProperty.DefaultMetadata.DefaultValue;
+                    GetValue(pinkGrid, columnSplit[1], (double)RowDefinition.MinHeightProperty.DefaultMetadata.DefaultValue) :
+                    (double)RowDefinition.MinHeightProperty.DefaultMetadata.DefaultValue;
                 definition.MaxHeight = columnSplit.Length >= 3 ?
-                    GetValue(pinkGrid, columnSplit[2], (double)ColumnDefinition.MaxWidthProperty.DefaultMetadata.DefaultValue) :
-                    (double)ColumnDefinition.MaxWidthProperty.DefaultMetadata.DefaultValue;
+                    GetValue(pinkGrid, columnSplit[2], (double)RowDefinition.MaxHeightProperty.DefaultMetadata.DefaultValue) :
+                    (double)RowDefinition.MaxHeightProperty.DefaultMetadata.DefaultValue;
 
                 SetIsGap(definition, isGap);
             }

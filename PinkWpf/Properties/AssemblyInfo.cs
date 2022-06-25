@@ -34,8 +34,8 @@ using System.Windows.Markup;
 // Можно задать все значения или принять номера сборки и редакции по умолчанию 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.12.0.0")]
-[assembly: AssemblyFileVersion("1.12.0.0")]
+[assembly: AssemblyVersion("1.13.0.0")]
+[assembly: AssemblyFileVersion("1.13.0.0")]
 
 [assembly: XmlnsDefinition(@"http://schemas.microsoft.com/winfx/2006/xaml/presentation", "PinkWpf")]
 [assembly: XmlnsDefinition(@"http://schemas.microsoft.com/winfx/2006/xaml/presentation", "PinkWpf.Animation")]
