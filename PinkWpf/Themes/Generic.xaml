@@ -53,4 +53,84 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="{x:Type controls:Loader}">
+        <Setter Property="LoaderContent">
+            <Setter.Value>
+                <TextBlock Background="Gray"
+                           Padding="5">
+                    Loading...
+                </TextBlock>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:Loader}">
+                    <Grid>
+                        <Grid x:Name="loaderRoot"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="5"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="5"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <ContentPresenter Content="{TemplateBinding LoaderContent}"/>
+                            <TextBlock Text="{TemplateBinding Status}"
+                                       Grid.Row="2"
+                                       TextWrapping="Wrap"/>
+                            <Button x:Name="reloadButton"
+                                    Command="{TemplateBinding Command}"
+                                    Grid.Row="4"
+                                    Content="Reload"
+                                    HorizontalAlignment="Center"
+                                    Visibility="Collapsed"/>
+                        </Grid>
+
+                        <ContentPresenter x:Name="presenter"
+                                          Visibility="Collapsed"/>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="State" Value="Loading">
+                            <Setter TargetName="presenter"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                            <Setter TargetName="loaderRoot"
+                                    Property="Visibility"
+                                    Value="Visible"/>
+                            <Setter TargetName="reloadButton"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="State" Value="Loaded">
+                            <Setter TargetName="presenter"
+                                    Property="Visibility"
+                                    Value="Visible"/>
+                            <Setter TargetName="loaderRoot"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                            <Setter TargetName="reloadButton"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="State" Value="Failed">
+                            <Setter TargetName="presenter"
+                                    Property="Visibility"
+                                    Value="Collapsed"/>
+                            <Setter TargetName="loaderRoot"
+                                    Property="Visibility"
+                                    Value="Visible"/>
+                            <Setter TargetName="reloadButton"
+                                    Property="Visibility"
+                                    Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
