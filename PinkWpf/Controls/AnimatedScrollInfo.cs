@@ -45,8 +45,8 @@ namespace PinkWpf.Controls
             Keyboard.IsKeyDown(Key.LeftShift) || 
             Keyboard.IsKeyDown(Key.RightShift) ||
             (
-                ScrollOwner.ComputedVerticalScrollBarVisibility != Visibility.Visible && 
-                ScrollOwner.ComputedHorizontalScrollBarVisibility == Visibility.Visible
+                !CanVerticallyScroll &&
+                CanHorizontallyScroll
             );
 
         protected override Size MeasureOverride(Size availableSize)
