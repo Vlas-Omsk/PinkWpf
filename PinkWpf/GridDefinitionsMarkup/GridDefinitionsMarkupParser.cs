@@ -85,7 +85,7 @@ namespace PinkWpf.GridDefinitionsMarkup
 
             var converter = TypeDescriptor.GetConverter(typeof(T));
 
-            return (T)converter.ConvertFromString(str);
+            return (T)converter.ConvertFromInvariantString(str);
         }
     }
 }
