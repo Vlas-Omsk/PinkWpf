@@ -81,7 +81,8 @@
                             <ContentPresenter Content="{TemplateBinding LoaderContent}"/>
                             <TextBlock Text="{TemplateBinding Status}"
                                        Grid.Row="2"
-                                       TextWrapping="Wrap"/>
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"/>
                             <Button x:Name="reloadButton"
                                     Command="{TemplateBinding Command}"
                                     Grid.Row="4"
